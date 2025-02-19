@@ -15,8 +15,13 @@ const index = (req, res) => {
     `
     connect.query(sql, (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
-        console.log(req.mainUrl);
-        res.json(results);
+        const properties = results.map(property => {
+            return {
+                ...property,
+                image: req.mainUrl + property.image
+            }
+        })
+        res.json(properties);
     });
 }
 
