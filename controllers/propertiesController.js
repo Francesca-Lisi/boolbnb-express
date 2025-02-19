@@ -15,6 +15,7 @@ const index = (req, res) => {
     `
     connect.query(sql, (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
+        console.log(req.mainUrl);
         res.json(results);
     });
 }

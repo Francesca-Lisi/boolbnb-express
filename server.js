@@ -5,11 +5,13 @@ const cors = require("cors")
 
 const notFound = require("./middlewares/notFound")
 const errorsHandler = require("./middlewares/errorsHandler")
+const setMainUrl = require('./middlewares/setMainUrl')
 
 const propertiesRouter = require("./routers/propertiesRouter")
 
 app.use(express.json())
 app.use(express.static("public"))
+app.use(setMainUrl)
 
 app.use(cors({
     origin: process.env.CORS_ORIGIN
