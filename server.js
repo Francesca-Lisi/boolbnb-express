@@ -6,6 +6,8 @@ const cors = require("cors")
 const notFound = require("./middlewares/notFound")
 const errorsHandler = require("./middlewares/errorsHandler")
 
+const propertiesRouter = require("./routers/propertiesRouter")
+
 app.use(express.json())
 app.use(express.static("public"))
 
@@ -17,7 +19,7 @@ app.get("/", (req, res) => {
     res.send("server connesso")
 })
 
-//inserire collegamento con il router
+app.use("/properties", propertiesRouter)
 
 app.use(notFound)
 app.use(errorsHandler)
