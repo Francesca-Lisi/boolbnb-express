@@ -1,0 +1,20 @@
+{
+  "name": "boolbnb-express",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Francesca-Lisi/boolbnb-express.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Francesca-Lisi/boolbnb-express/issues"
+  },
+  "homepage": "https://github.com/Francesca-Lisi/boolbnb-express#readme",
+  "description": ""
+}
