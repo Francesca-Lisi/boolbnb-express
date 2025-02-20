@@ -44,8 +44,40 @@ const show = (req, res) => {
         FROM images
         WHERE images.property_id = ?`
 
+    connect.query(sql, [id], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (result.length === 0) return res.status(404).json({ error: 'Result not Found' })
 
-    res.send(`immobile con id ${id}`)
+
+        connect.query(sqlReviews, [id], (err, resultReviews) => {
+            if (err) return res.status(500).json({ error: err.message });
+
+
+            connect.query(sqlImages, [id], (err, resultImages) => {
+                if (err) return res.status(500).json({ error: err.message });
+
+
+                const property = result[0]
+                res.json({
+                    ...property,
+                    reviews: resultReviews,
+                    images: resultImages.map(image => {
+                        return {
+                            ...image,
+                            path: req.mainUrl + image.path
+                        }
+                    })
+                })
+            })
+        })
+
+
+    })
+
+
+
+
+
 }
 
 
