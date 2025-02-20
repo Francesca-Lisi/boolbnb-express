@@ -103,6 +103,8 @@ const store = (req, res) => {
         if (err) return res.status(500).json({ err: "Inserimento non riuscito" })
         res.status(201).json({ stato: "success", message: "Inserimento completato" })
     })
+
+    res.json(req.body)
 }
 
 const storeReview = (req, res) => {
