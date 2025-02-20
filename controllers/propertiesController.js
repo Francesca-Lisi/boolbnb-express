@@ -13,6 +13,10 @@ const index = (req, res) => {
         GROUP BY properties.id, image
         ORDER BY likes DESC
     `
+
+    //inserire anche Types per stampare dinamicamente i bottoni delle categorie del modal
+
+
     connect.query(sql, (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
         const properties = results.map(property => {
@@ -26,9 +30,59 @@ const index = (req, res) => {
 }
 
 const show = (req, res) => {
-    const id = req.params.id
-    res.send(`immobile con id ${id}`)
+    const id = parseInt(req.params.id)
+    const sql = `SELECT properties.*, types.name as type
+        FROM properties
+        JOIN types ON properties.type_id = types.id
+        WHERE properties.id = ?`
+
+    const sqlReviews = `SELECT reviews.*
+        FROM reviews
+        WHERE reviews.property_id = ?`
+
+    const sqlImages = `SELECT images.*
+        FROM images
+        WHERE images.property_id = ?`
+
+    connect.query(sql, [id], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (result.length === 0) return res.status(404).json({ error: 'Result not Found' })
+
+
+        connect.query(sqlReviews, [id], (err, resultReviews) => {
+            if (err) return res.status(500).json({ error: err.message });
+
+
+            connect.query(sqlImages, [id], (err, resultImages) => {
+                if (err) return res.status(500).json({ error: err.message });
+
+
+                const property = result[0]
+                res.json({
+                    ...property,
+                    reviews: resultReviews,
+                    images: resultImages.map(image => {
+                        return {
+                            ...image,
+                            path: req.mainUrl + image.path
+                        }
+                    })
+                })
+            })
+        })
+
+
+    })
+
+
+
+
+
 }
+
+
+
+
 
 const store = (req, res) => {
     res.send("immobile caricato")
