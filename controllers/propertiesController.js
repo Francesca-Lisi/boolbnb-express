@@ -118,9 +118,18 @@ const storeReview = (req, res) => {
 
 }
 
-const modify = (req, res) => {
+const modifyLikes = (req, res) => {
     const id = parseInt(req.params.id)
-    res.send(`like + 1 a id ${id}`)
+    const sql = `UPDATE properties 
+        SET likes = likes+1
+        WHERE properties.id = ?`
+
+    connect.query(sql, [id], (err, result) => {
+        if (err) return res.status(500).json({ err: "Modifica non riuscita" })
+        res.status(200).json({ stato: "success", message: "Elemento aggiornato con successo" })
+    })
+
+
 }
 
 module.exports = {
@@ -128,5 +137,5 @@ module.exports = {
     show,
     store,
     storeReview,
-    modify
+    modifyLikes
 }
