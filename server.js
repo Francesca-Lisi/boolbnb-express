@@ -8,6 +8,7 @@ const errorsHandler = require("./middlewares/errorsHandler")
 const setMainUrl = require('./middlewares/setMainUrl')
 
 const propertiesRouter = require("./routers/propertiesRouter")
+const typesRouter = require("./routers/typesRouter")
 
 app.use(express.json())
 app.use(express.static("public"))
@@ -22,6 +23,7 @@ app.get("/", (req, res) => {
 })
 
 app.use("/properties", propertiesRouter)
+app.use("/types", typesRouter)
 
 app.use(notFound)
 app.use(errorsHandler)
