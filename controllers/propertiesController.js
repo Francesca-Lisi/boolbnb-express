@@ -107,7 +107,15 @@ const store = (req, res) => {
 
 const storeReview = (req, res) => {
     const id = parseInt(req.params.id)
-    res.send(`recensione con id ${id} caricata`)
+    const { author, text, vote, date, days } = req.body;
+    const sql = `INSERT INTO reviews (property_id, author, text, vote, date, days) 
+    VALUES (?, ?, ?, ?, ?, ?)`
+
+    connect.query(sql, [id, author, text, vote, date, days], (err, result) => {
+        if (err) return res.status(500).json({ err: "Inserimento non riuscito" })
+        res.status(201).json({ stato: "success", message: "Inserimento completato" })
+    })
+
 }
 
 const modify = (req, res) => {
