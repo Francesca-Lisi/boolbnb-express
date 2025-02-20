@@ -1,9 +1,5 @@
 const connect = require("../data/db")
 
-/*
-    Selezionare id, title, address, likes, avg(reviews), n. tot. recensioni, la prima immagine
-    dalle tabelle properties, reviews, images
-*/
 const index = (req, res) => {
     const sql = `
         SELECT properties.id, properties.title, properties.address, properties.likes, round(avg(reviews.vote), 1) AS average_vote, COUNT(reviews.id) AS number_of_reviews
@@ -12,7 +8,6 @@ const index = (req, res) => {
         GROUP BY properties.id
         ORDER BY likes DESC
     `
-    //inserire anche Types per stampare dinamicamente i bottoni delle categorie del modal
 
     const sqlImages = `SELECT images.*
         FROM images`
@@ -41,18 +36,6 @@ const index = (req, res) => {
 
         })
 
-
-
-        // const properties = results
-        // res.json(properties)
-
-        // const properties = results.map(property => {
-        //     return {
-        //         ...property,
-        //         image: req.mainUrl + property.image
-        //     }
-        // })
-        // res.json(properties);
     });
 }
 
@@ -108,21 +91,34 @@ const show = (req, res) => {
 }
 
 
-
-
-
 const store = (req, res) => {
-    res.send("immobile caricato")
+    const { type_id, title, rooms, beds, bathrooms, sqm, address, email } = req.body
+
+    const sql = `
+    INSERT INTO properties (type_id, title, rooms, beds, bathrooms, sqm, address, email)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `
+
+    connect.query(sql, [type_id, title, rooms, beds, bathrooms, sqm, address, email], (err, result) => {
+        if (err) return res.status(500).json({ err: "Inserimento non riuscito" })
+        res.status(201).json({ stato: "success", message: "Inserimento completato" })
+    })
 }
 
 const storeReview = (req, res) => {
-    const id = req.params.id
+    const id = parseInt(req.params.id)
     res.send(`recensione con id ${id} caricata`)
+}
+
+const modify = (req, res) => {
+    const id = parseInt(req.params.id)
+    res.send(`like + 1 a id ${id}`)
 }
 
 module.exports = {
     index,
     show,
     store,
-    storeReview
+    storeReview,
+    modify
 }

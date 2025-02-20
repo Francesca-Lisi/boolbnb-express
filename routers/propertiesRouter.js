@@ -11,4 +11,6 @@ router.post("/", propertiesController.store)
 
 router.post("/:id/review", propertiesController.storeReview)
 
+router.patch("/:id", propertiesController.modify)
+
 module.exports = router
