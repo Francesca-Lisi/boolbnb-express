@@ -6,26 +6,53 @@ const connect = require("../data/db")
 */
 const index = (req, res) => {
     const sql = `
-        SELECT properties.id, properties.title, properties.address, properties.likes, round(avg(reviews.vote), 1) AS average_vote, COUNT(reviews.id) AS number_of_reviews , images.path AS image
+        SELECT properties.id, properties.title, properties.address, properties.likes, round(avg(reviews.vote), 1) AS average_vote, COUNT(reviews.id) AS number_of_reviews
         FROM properties
         LEFT JOIN reviews ON reviews.property_id = properties.id
-        LEFT JOIN images ON images.property_id = properties.id
-        GROUP BY properties.id, image
+        GROUP BY properties.id
         ORDER BY likes DESC
     `
-
     //inserire anche Types per stampare dinamicamente i bottoni delle categorie del modal
 
+    const sqlImages = `SELECT images.*
+        FROM images`
 
     connect.query(sql, (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
-        const properties = results.map(property => {
-            return {
-                ...property,
-                image: req.mainUrl + property.image
-            }
+
+
+        connect.query(sqlImages, (err, resultImages) => {
+            if (err) return res.status(500).json({ error: err.message });
+
+            const resImg = resultImages.map(image => {
+                return {
+                    ...image,
+                    path: req.mainUrl + image.path
+                }
+            })
+            const properties = results.map(property => {
+                return {
+                    ...property,
+                    images: resImg.filter(image => image.property_id === property.id)
+                }
+            })
+
+            res.json(properties)
+
         })
-        res.json(properties);
+
+
+
+        // const properties = results
+        // res.json(properties)
+
+        // const properties = results.map(property => {
+        //     return {
+        //         ...property,
+        //         image: req.mainUrl + property.image
+        //     }
+        // })
+        // res.json(properties);
     });
 }
 
