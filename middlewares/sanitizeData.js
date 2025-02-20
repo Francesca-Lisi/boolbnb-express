@@ -3,7 +3,7 @@ const validator = require('validator');
 const sanitizeData = (req, res, next) => {
   const sanitize = (value) => {
     if (typeof value === 'string') {
-      return validator.whitelist(value.trim(), 'a-zA-Z0-9@./, ')
+      return validator.whitelist(value.trim(), '-a-zA-Z0-9@./,! ')
     }
     return value
   };
