@@ -41,6 +41,8 @@ const index = (req, res) => {
     const sqlImages = `SELECT images.*
         FROM images`
 
+
+
     const limit = parseInt(req.query.limit)
     const page = parseInt(req.query.page)
     const offset = (page - 1) * limit
@@ -61,6 +63,7 @@ const index = (req, res) => {
             const properties = results.map(property => {
                 return {
                     ...property,
+                    cover_img: req.mainUrl + property.cover_img,
                     images: resImg.filter(image => image.property_id === property.id)
                 }
             })
@@ -102,6 +105,7 @@ const show = (req, res) => {
 
 
                 const property = result[0]
+                property.cover_img = req.mainUrl + property.cover_img;
                 res.json({
                     ...property,
                     reviews: resultReviews,
