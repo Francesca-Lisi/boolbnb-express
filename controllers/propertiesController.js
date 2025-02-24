@@ -2,7 +2,7 @@ const connect = require("../data/db")
 
 const index = (req, res) => {
     const sql = `
-        SELECT properties.id, properties.title, properties.address, properties.likes, round(avg(reviews.vote), 1) AS average_vote, COUNT(reviews.id) AS number_of_reviews
+        SELECT properties.*, round(avg(reviews.vote), 1) AS average_vote, COUNT(reviews.id) AS number_of_reviews
         FROM properties
         LEFT JOIN reviews ON reviews.property_id = properties.id
         GROUP BY properties.id
