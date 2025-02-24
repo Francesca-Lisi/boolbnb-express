@@ -24,12 +24,18 @@ const index = (req, res) => {
         sql += ' AND properties.type_id = ?';
         params.push(type);
     }
+    if (search) {
+        sql += ` AND (properties.title LIKE '%${search}%' OR properties.address LIKE '%${search}%')`;
+    }
+
+    console.log(search)
 
     sql += `
     GROUP BY properties.id
     ORDER BY likes DESC
     LIMIT ? OFFSET ?
     `
+
     // Limit e offset devono essere popolati, altrimenti avremo NaN e verra' scatenato un errore
 
     const sqlImages = `SELECT images.*
