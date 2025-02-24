@@ -1,18 +1,51 @@
 const connect = require("../data/db")
 
 const index = (req, res) => {
-    const sql = `
-        SELECT properties.*, round(avg(reviews.vote), 1) AS average_vote, COUNT(reviews.id) AS number_of_reviews
-        FROM properties
-        LEFT JOIN reviews ON reviews.property_id = properties.id
-        GROUP BY properties.id
-        ORDER BY likes DESC
+    const { rooms, beds, type, search } = req.query;
+    let params = [];
+
+    let sql = `
+    SELECT properties.*, types.name AS category, types.icon_path, ROUND(avg(ratings.value),1) AS average_vote, COUNT(reviews.id) AS num_of_reviews
+    FROM properties
+    LEFT JOIN reviews ON reviews.property_id = properties.id
+    LEFT JOIN ratings ON reviews.rating_id = ratings.id 
+    JOIN types ON properties.type_id = types.id
+    WHERE 1=1
     `
+    if (rooms) {
+        sql += ' AND properties.rooms >= ?';
+        params.push(rooms);
+    }
+    if (beds) {
+        sql += ' AND properties.beds >= ?';
+        params.push(beds);
+    }
+    if (type) {
+        sql += ' AND properties.type_id = ?';
+        params.push(type);
+    }
+    if (search) {
+        sql += ` AND (properties.title LIKE '%${search}%' OR properties.address LIKE '%${search}%')`;
+    }
+
+    console.log(search)
+
+    sql += `
+    GROUP BY properties.id
+    ORDER BY likes DESC
+    LIMIT ? OFFSET ?
+    `
+
+    // Limit e offset devono essere popolati, altrimenti avremo NaN e verra' scatenato un errore
 
     const sqlImages = `SELECT images.*
         FROM images`
 
-    connect.query(sql, (err, results) => {
+    const limit = parseInt(req.query.limit)
+    const page = parseInt(req.query.page)
+    const offset = (page - 1) * limit
+
+    connect.query(sql, [...params, limit, offset], (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
 
 
