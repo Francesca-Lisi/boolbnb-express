@@ -147,8 +147,9 @@ const store = (req, res) => {
 const storeReview = (req, res) => {
     const id = parseInt(req.params.id)
     const { author, text, vote, date, days } = req.body;
-    const sql = `INSERT INTO reviews (property_id, author, text, vote, date, days) 
-    VALUES (?, ?, ?, ?, ?, ?)`
+
+    const sql = `INSERT INTO reviews (property_id, author, text, rating_id, date, days) 
+    VALUES (?, ?, ?, (SELECT id FROM ratings WHERE value = ?), ?, ?)`
 
     connect.query(sql, [id, author, text, vote, date, days], (err, result) => {
         if (err) return res.status(500).json({ err: "Inserimento non riuscito" })
