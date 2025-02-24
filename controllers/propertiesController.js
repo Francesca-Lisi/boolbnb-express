@@ -79,8 +79,9 @@ const show = (req, res) => {
         JOIN types ON properties.type_id = types.id
         WHERE properties.id = ?`
 
-    const sqlReviews = `SELECT reviews.*
+    const sqlReviews = `SELECT reviews.*, ratings.value AS vote
         FROM reviews
+        JOIN ratings ON reviews.rating_id = ratings.id 
         WHERE reviews.property_id = ?`
 
     const sqlImages = `SELECT images.*
