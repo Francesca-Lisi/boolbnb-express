@@ -2,12 +2,12 @@ const connect = require("../data/db")
 
 const index = (req, res) => {
     const sql = `
-        SELECT properties.*, round(avg(reviews.vote), 1) AS average_vote, COUNT(reviews.id) AS number_of_reviews
-        FROM properties
-        LEFT JOIN reviews ON reviews.property_id = properties.id
-        GROUP BY properties.id
-        ORDER BY likes DESC
-    `
+    SELECT properties.*, ROUND(avg(ratings.value),1) AS average_vote, COUNT(reviews.id) AS num_of_reviews
+    FROM properties
+    LEFT JOIN reviews ON reviews.property_id = properties.id
+    JOIN ratings ON reviews.rating_id = ratings.id 
+    GROUP BY properties.id
+    ORDER BY likes DESC`
 
     const sqlImages = `SELECT images.*
         FROM images`
