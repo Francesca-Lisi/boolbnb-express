@@ -5,16 +5,21 @@ const index = (req, res) => {
     SELECT properties.*, types.name AS category, types.icon_path, ROUND(avg(ratings.value),1) AS average_vote, COUNT(reviews.id) AS num_of_reviews
     FROM properties
     LEFT JOIN reviews ON reviews.property_id = properties.id
-    JOIN ratings ON reviews.rating_id = ratings.id 
+    LEFT JOIN ratings ON reviews.rating_id = ratings.id 
     JOIN types ON properties.type_id = types.id
     GROUP BY properties.id
-    ORDER BY likes DESC;
+    ORDER BY likes DESC
+    LIMIT ? OFFSET ?
     `
 
     const sqlImages = `SELECT images.*
         FROM images`
 
-    connect.query(sql, (err, results) => {
+    const limit = parseInt(req.query.limit)
+    const page = parseInt(req.query.page)
+    const offset = (page - 1) * limit
+
+    connect.query(sql, [limit, offset], (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
 
 
