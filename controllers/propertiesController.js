@@ -124,15 +124,17 @@ const show = (req, res) => {
 }
 
 
+
+//Aggiungere Cover_img e implementare gestione (multer)
 const store = (req, res) => {
-    const { type_id, title, rooms, beds, bathrooms, sqm, address, email } = req.body
+    const { type_id, title, rooms, beds, bathrooms, sqm, address, email, description, owner_fullname } = req.body
 
     const sql = `
-    INSERT INTO properties (type_id, title, rooms, beds, bathrooms, sqm, address, email)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO properties (type_id, title, rooms, beds, bathrooms, sqm, address, email, description, owner_fullname)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `
 
-    connect.query(sql, [type_id, title, rooms, beds, bathrooms, sqm, address, email], (err, result) => {
+    connect.query(sql, [type_id, title, rooms, beds, bathrooms, sqm, address, email, description, owner_fullname], (err, result) => {
         if (err) return res.status(500).json({ err: "Inserimento non riuscito" })
         res.status(201).json({ stato: "success", message: "Inserimento completato" })
     })
@@ -140,11 +142,14 @@ const store = (req, res) => {
     res.json(req.body)
 }
 
+
+
 const storeReview = (req, res) => {
     const id = parseInt(req.params.id)
     const { author, text, vote, date, days } = req.body;
-    const sql = `INSERT INTO reviews (property_id, author, text, vote, date, days) 
-    VALUES (?, ?, ?, ?, ?, ?)`
+
+    const sql = `INSERT INTO reviews (property_id, author, text, rating_id, date, days) 
+    VALUES (?, ?, ?, (SELECT id FROM ratings WHERE value = ?), ?, ?)`
 
     connect.query(sql, [id, author, text, vote, date, days], (err, result) => {
         if (err) return res.status(500).json({ err: "Inserimento non riuscito" })
