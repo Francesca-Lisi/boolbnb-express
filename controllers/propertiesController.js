@@ -28,8 +28,6 @@ const index = (req, res) => {
         sql += ` AND (properties.title LIKE '%${search}%' OR properties.address LIKE '%${search}%')`;
     }
 
-    console.log(search)
-
     sql += `
     GROUP BY properties.id
     ORDER BY likes DESC
