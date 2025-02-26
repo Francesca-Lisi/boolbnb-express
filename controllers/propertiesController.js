@@ -41,7 +41,7 @@ const index = (req, res) => {
     const sqlImages = `SELECT images.*
         FROM images`
 
-
+    const sqlTotalResults = `SELECT COUNT(*) AS count FROM properties`;
 
     const limit = parseInt(req.query.limit)
     const page = parseInt(req.query.page)
@@ -68,7 +68,14 @@ const index = (req, res) => {
                 }
             })
 
-            res.json(properties)
+            connect.query(sqlTotalResults, (err, [totalResults]) => {
+                if (err) return res.status(500).json({ error: err.message });
+                res.json({
+                    totalResults: totalResults.count,
+                    totalPages: Math.ceil(totalResults.count / limit),
+                    results: properties
+                });
+            })
 
         })
 
