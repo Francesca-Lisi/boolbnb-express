@@ -12,20 +12,26 @@ const index = (req, res) => {
     JOIN types ON properties.type_id = types.id
     WHERE 1=1
     `
+    let sqlTotalResults = `SELECT COUNT(*) AS count FROM properties WHERE 1=1`;
+
     if (rooms) {
         sql += ' AND properties.rooms >= ?';
+        sqlTotalResults += ' AND properties.rooms >= ?';
         params.push(rooms);
     }
     if (beds) {
         sql += ' AND properties.beds >= ?';
+        sqlTotalResults += ' AND properties.beds >= ?';
         params.push(beds);
     }
     if (type) {
         sql += ' AND properties.type_id = ?';
+        sqlTotalResults += ' AND properties.type_id = ?';
         params.push(type);
     }
     if (search) {
         sql += ` AND (properties.title LIKE '%${search}%' OR properties.address LIKE '%${search}%')`;
+        sqlTotalResults += ` AND (properties.title LIKE '%${search}%' OR properties.address LIKE '%${search}%')`;
     }
 
     sql += `
@@ -39,7 +45,6 @@ const index = (req, res) => {
     const sqlImages = `SELECT images.*
         FROM images`
 
-    const sqlTotalResults = `SELECT COUNT(*) AS count FROM properties`;
 
     const limit = parseInt(req.query.limit)
     const page = parseInt(req.query.page)
@@ -66,7 +71,7 @@ const index = (req, res) => {
                 }
             })
 
-            connect.query(sqlTotalResults, (err, [totalResults]) => {
+            connect.query(sqlTotalResults, params, (err, [totalResults]) => {
                 if (err) return res.status(500).json({ error: err.message });
                 res.json({
                     totalResults: totalResults.count,
