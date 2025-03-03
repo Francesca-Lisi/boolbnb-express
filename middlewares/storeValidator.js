@@ -5,7 +5,7 @@ const storeValidator = (req, res, next) => {
 
     let message = `Il campo inserito non è valido `
 
-    if (!title || title.length <= 10) {
+    if (!title || title.length < 10) {
         return res.status(400).json({ error: `title: ${message}` })
     }
 
@@ -28,7 +28,7 @@ const storeValidator = (req, res, next) => {
     if (!email || !validator.isEmail(email)) {
         return res.status(400).json({ error: `email: ${message}` })
     }
-    if (!description || description.length <= 10) {
+    if (!description || description.length < 10) {
         return res.status(400).json({ error: `description: ${message}` })
     }
     if (!owner_fullname) {
