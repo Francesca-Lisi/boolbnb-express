@@ -142,19 +142,21 @@ const show = (req, res) => {
 
 //Aggiungere Cover_img e implementare gestione (multer)
 const store = (req, res) => {
-    const { type_id, title, rooms, beds, bathrooms, sqm, address, email, description, owner_fullname } = req.body
+    const { category, title, rooms, beds, bathrooms, sqm, address, email, description, owner_fullname } = req.body
+    const cover_img = `/covers/${req.file.filename}`;
 
     const sql = `
-    INSERT INTO properties (type_id, title, rooms, beds, bathrooms, sqm, address, email, description, owner_fullname)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO properties (type_id, title, rooms, beds, bathrooms, sqm, address, email, description, owner_fullname, cover_img)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `
+    const sqlLastId = `SELECT id FROM properties ORDER BY id DESC LIMIT 1`;
 
-    connect.query(sql, [type_id, title, rooms, beds, bathrooms, sqm, address, email, description, owner_fullname], (err, result) => {
+    connect.query(sql, [category, title, rooms, beds, bathrooms, sqm, address, email, description, owner_fullname, cover_img], (err, result) => {
         if (err) return res.status(500).json({ err: "Inserimento non riuscito" })
-        res.status(201).json({ stato: "success", message: "Inserimento completato" })
+        connect.query(sqlLastId, (err, lastId) => {
+            res.json(lastId[0])
+        })
     })
-
-    res.json(req.body)
 }
 
 
