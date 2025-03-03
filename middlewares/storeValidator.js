@@ -1,7 +1,7 @@
 const validator = require('validator');
 
 const storeValidator = (req, res, next) => {
-    const { title, rooms, beds, bathrooms, sqm, address, email, description, owner_fullname, cover_img, category} = req.body
+    const { title, rooms, beds, bathrooms, sqm, address, email, description, owner_fullname, cover_img, category } = req.body
 
     let message = `Il campo inserito non è valido `
 
@@ -28,7 +28,7 @@ const storeValidator = (req, res, next) => {
     if (!email || !validator.isEmail(email)) {
         return res.status(400).json({ error: `email: ${message}` })
     }
-    if (!description || description.length < 10) {
+    if (!description || description.length < 10 || description.length > 500) {
         return res.status(400).json({ error: `description: ${message}` })
     }
     if (!owner_fullname) {
