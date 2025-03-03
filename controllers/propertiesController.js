@@ -149,10 +149,13 @@ const store = (req, res) => {
     INSERT INTO properties (type_id, title, rooms, beds, bathrooms, sqm, address, email, description, owner_fullname, cover_img)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `
+    const sqlLastId = `SELECT id FROM properties ORDER BY id DESC LIMIT 1`;
 
     connect.query(sql, [category, title, rooms, beds, bathrooms, sqm, address, email, description, owner_fullname, cover_img], (err, result) => {
         if (err) return res.status(500).json({ err: "Inserimento non riuscito" })
-        res.status(201).json({ stato: "success", message: "Inserimento completato" })
+        connect.query(sqlLastId, (err, lastId) => {
+            res.json(lastId[0])
+        })
     })
 }
 
