@@ -5,7 +5,7 @@ const storage = multer.diskStorage({
     cb(null, "./public/images/");
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Rinominare il file
+    cb(null, Date.now() + '-' + file.originalname); // Rinominare il file
   },
 });
 

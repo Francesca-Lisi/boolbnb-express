@@ -161,7 +161,16 @@ const store = (req, res) => {
 
 const storeGallery = (req, res) => {
     const id = parseInt(req.params.id);
-    res.json(req.files);
+    let sql = `INSERT INTO images (path, property_id) VALUES`
+    for (let file of req.files) {
+        sql += ` ('/images/${file.filename}', ${id}),`
+    }
+    sql = sql.slice(0, -1) + ';'
+
+    connect.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ err: "Inserimento non riuscito" })
+        res.status(201).json({ stato: "success", message: "Inserimento completato" })
+    })
 }
 
 
