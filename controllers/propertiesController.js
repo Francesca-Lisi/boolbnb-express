@@ -159,6 +159,10 @@ const store = (req, res) => {
     })
 }
 
+const storeGallery = (req, res) => {
+    const id = parseInt(req.params.id);
+    res.json(req.files);
+}
 
 
 const storeReview = (req, res) => {
@@ -194,5 +198,6 @@ module.exports = {
     show,
     store,
     storeReview,
-    modifyLikes
+    modifyLikes,
+    storeGallery
 }
