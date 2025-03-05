@@ -19,7 +19,7 @@ app.use(cors({
     origin: process.env.CORS_ORIGIN
 }))
 
-app.use(sanitizeData)
+// app.use(sanitizeData)
 
 app.get("/", (req, res) => {
     res.send("server connesso")
