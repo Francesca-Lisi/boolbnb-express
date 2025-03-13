@@ -4,6 +4,7 @@ const index = (req, res) => {
     const { rooms, beds, type, search } = req.query;
     let params = [];
 
+    //LEFT JOIN perchè prendiamo tutte le properties, anche quelle senza relazioni con rewiews or ratings
     let sql = `
     SELECT properties.*, types.name AS category, types.icon_path, ROUND(avg(ratings.value),1) AS average_vote, COUNT(reviews.id) AS num_of_reviews
     FROM properties
@@ -14,6 +15,7 @@ const index = (req, res) => {
     `
     let sqlTotalResults = `SELECT COUNT(*) AS count FROM properties WHERE 1=1`;
 
+    //filtri in base alla query
     if (rooms) {
         sql += ' AND properties.rooms >= ?';
         sqlTotalResults += ' AND properties.rooms >= ?';
@@ -50,10 +52,11 @@ const index = (req, res) => {
     const page = parseInt(req.query.page)
     const offset = (page - 1) * limit
 
+    //query principale
     connect.query(sql, [...params, limit, offset], (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
 
-
+        //query immagini
         connect.query(sqlImages, (err, resultImages) => {
             if (err) return res.status(500).json({ error: err.message });
 
@@ -71,6 +74,7 @@ const index = (req, res) => {
                 }
             })
 
+            //query risultai totali
             connect.query(sqlTotalResults, params, (err, [totalResults]) => {
                 if (err) return res.status(500).json({ error: err.message });
                 res.json({
@@ -149,6 +153,8 @@ const store = (req, res) => {
     INSERT INTO properties (type_id, title, rooms, beds, bathrooms, sqm, address, email, description, owner_fullname, cover_img)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `
+
+    //LastID ci serve a recuperre l'id della proprietà appena inserita
     const sqlLastId = `SELECT id FROM properties ORDER BY id DESC LIMIT 1`;
 
     connect.query(sql, [category, title, rooms, beds, bathrooms, sqm, address, email, description, owner_fullname, cover_img], (err, result) => {
